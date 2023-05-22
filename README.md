@@ -51,38 +51,54 @@ You can find the starting Java project in the mvn_ready directory. This project 
 To try out the microservices by using Maven, run the following Maven goal to build the system microservice and run it inside Open Liberty:
 
 ```bash
+cd mvn_ready
+```
+
+```bash
 mvn -pl system liberty:run
 ```
 
-pen another command-line session and run the following Maven goal to build the inventory microservice and run it inside Open Liberty:
+To try out the microservices by using Maven, open another command-line session and run the following Maven goal to build the inventory microservice and run it inside Open Liberty:
+
+```bash
+cd mvn_ready
+```
 
 ```bash
 mvn -pl inventory liberty:run
 ```
 
-After you see the following message in both command-line sessions, both of your services are ready:
+> After you see the following message in both command-line sessions, both of your services are ready:
+>
+>```
+>The defaultServer server is ready to run a smarter planet.
+>```
 
-```
-The defaultServer server is ready to run a smarter planet.
-```
+### 2.1 Test the running services
 
-To access the `inventory` service, which displays the current contents of the inventory, see [http://localhost:9081/inventory/systems](http://localhost:9081/inventory/systems)
+Now 2 liberty services are running on different ports on your localhost:
+
+| Service | Port | Definition |
+| ------------- | ------------- | ------------- |
+| inventory  | 9081  | [mvn_ready/inventory/pom.xml](mvn_ready/inventory/pom.xml) & [mvn_ready/inventory/src/main/liberty/config/server.xml](mvn_ready/inventory/src/main/liberty/config/server.xml)  |
+| system  | 9080  | [mvn_ready/system/pom.xml](mvn_ready/system/pom.xml) & [mvn_ready/system/src/main/liberty/config/server.xml](mvn_ready/system/src/main/liberty/config/server.xml)  |
+
+* To acces main page of `inventory` see or curl [http://localhost:9081](http://localhost:9081)
+
+* To access the `inventory` service, which displays the current contents of the inventory, see [http://localhost:9081/inventory/systems](http://localhost:9081/inventory/systems)
 
 ```bash
 curl http://localhost:9081/inventory/systems
 ```
+* To acces main page of `system` see or curl [http://localhost:9080](http://localhost:9080)
 
-> Defined at [mvn_ready/inventory/pom.xml](mvn_ready/inventory/pom.xml) and [mvn_ready/inventory/src/main/liberty/config/server.xml](mvn_ready/inventory/src/main/liberty/config/server.xml)
-
-To access the `system` service, which shows the system properties of the running JVM, see [http://localhost:9080/system/properties](http://localhost:9080/system/properties)
+* To access the `system` service, which shows the system properties of the running JVM, see [http://localhost:9080/system/properties](http://localhost:9080/system/properties)
 
 ```bash
 curl http://localhost:9080/system/properties
 ```
 
-> Defined at [mvn_ready/system/pom.xml](mvn_ready/system/pom.xml) and [mvn_ready/system/src/main/liberty/config/server.xml](mvn_ready/system/src/main/liberty/config/server.xml)
-
-You can add the system properties of your localhost to the `inventory` service at [http://localhost:9081/inventory/systems/localhost](http://localhost:9081/inventory/systems/localhost)
+* You can add the system properties of your localhost to the `inventory` service at [http://localhost:9081/inventory/systems/localhost](http://localhost:9081/inventory/systems/localhost)
 
 ```bash
 curl http://localhost:9081/inventory/systems/localhost
@@ -93,12 +109,6 @@ After you are finished checking out the microservices, stop the Open Liberty ser
 ```
 mvn -pl system liberty:stop
 mvn -pl inventory liberty:stop
-```
-
-To package your microservices, run the Maven package goal to build the application .war files from the `mvn_ready` directory so that the .war files are in the system/target and inventory/target directories. This is needed to run them with Docker.
-
-```
-mvn package
 ```
 
 To learn more about RESTful web services and how to build them, see https://openliberty.io/guides/rest-intro.html[Creating a RESTful web service^] for details about how to build the `system` service. The `inventory` service is built in a similar way.
@@ -127,6 +137,16 @@ In this guide, you’re using an official image from the IBM Container Registry 
 
 ### 3.2 Building services images
 
+### 3.2.1 Maven package
+
+To package your microservices, run the Maven package goal to build the application .war files from the `mvn_ready` directory so that the .war files are in the system/target and inventory/target directories. This is needed to run them with Docker.
+
+```
+mvn package
+```
+
+### 3.2.2 Dockerfiles
+
 Autoexplained with comments [docker_ready/inventory/Dockerfile](docker_ready/inventory/Dockerfile).
 
 Autoexplained with comments [docker_ready/system/Dockerfile](docker_ready/inventory/Dockerfile).
@@ -137,10 +157,6 @@ Now that your microservices are packaged and you have written your Dockerfiles, 
 docker build -t system:1.0-SNAPSHOT system/.
 docker build -t inventory:1.0-SNAPSHOT inventory/.
 ```
-
->:warning: **WARNING:**
->
-> A previous `mvn package` of the project is needed, because Dockerfiles use .war files generated by `mvn package` execution.
 
 To verify that the images are built, run the docker images command to list all local Docker images:
 
@@ -226,4 +242,3 @@ Go to the [http://localhost:9081/inventory/systems/<system-ip-address>](http://l
 - [ ] Testing the microservices
 - [ ] Running the tests
 - [ ] Great work! You’re done!
-
