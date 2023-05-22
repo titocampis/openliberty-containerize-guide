@@ -139,11 +139,17 @@ In this guide, you’re using an official image from the IBM Container Registry 
 
 ### 3.2.1 Maven package
 
+To build and run liberty services in docker, compiled java artifacts are needed (`JAR`, `WAR`, `EAR`). In order to have one of them, we need to use `mvn package`.
+
 To package your microservices, run the Maven package goal to build the application .war files from the `mvn_ready` directory so that the .war files are in the system/target and inventory/target directories. This is needed to run them with Docker.
 
 ```
 mvn package
 ```
+
+>:mega: **NOTA:**
+>
+> Executing `mvn package` from directory `docker_ready` it stores the `.war` files into `inventory/target` and `system/target`.
 
 ### 3.2.2 Dockerfiles
 
