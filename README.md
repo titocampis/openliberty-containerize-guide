@@ -205,7 +205,12 @@ CONTAINER ID    IMAGE                   COMMAND                  CREATED        
 
 If a problem occurs and your containers exit prematurely, the containers don't appear in the container list that the `docker ps` command displays. Instead, your containers appear with an `Exited` status when they run the `docker ps -a` command. Run the `docker logs system` and `docker logs inventory` commands to view the container logs for any potential problems. Run the `docker stats system` and `docker stats inventory` commands to display a live stream of usage statistics for your containers. You can also double-check that your Dockerfiles are correct. When you find the cause of the issues, remove the faulty containers with the `docker rm system` and `docker rm inventory` commands. Rebuild your images, and start the containers again.
 
-### 3.4 Check docker running services
+### 3.4 Checking docker running services
+
+| Service | Port | Definition |
+| ------------- | ------------- | ------------- |
+| inventory  | 9081  | [docker_ready/inventory/pom.xml](docker_ready/inventory/pom.xml) & [docker_ready/inventory/src/main/liberty/config/server.xml](docker_ready/inventory/src/main/liberty/config/server.xml)  |
+| system  | 9080  | [docker_ready/system/pom.xml](docker_ready/system/pom.xml) & [docker_ready/system/src/main/liberty/config/server.xml](docker_ready/system/src/main/liberty/config/server.xml)  |
 
 To access the `inventory` service, which displays the current contents of the inventory, see [http://localhost:9081/inventory/systems](http://localhost:9081/inventory/systems)
 
@@ -213,15 +218,11 @@ To access the `inventory` service, which displays the current contents of the in
 curl http://localhost:9081/inventory/systems
 ```
 
-> Defined at [mvn_ready/inventory/pom.xml](mvn_ready/inventory/pom.xml) and [mvn_ready/inventory/src/main/liberty/config/server.xml](mvn_ready/inventory/src/main/liberty/config/server.xml)
-
 To access the `system` service, which shows the system properties of the running JVM, see [http://localhost:9080/system/properties](http://localhost:9080/system/properties)
 
 ```bash
 curl http://localhost:9080/system/properties
 ```
-
-> Defined at [mvn_ready/system/pom.xml](mvn_ready/system/pom.xml) and [mvn_ready/system/src/main/liberty/config/server.xml](mvn_ready/system/src/main/liberty/config/server.xml)
 
 You can add the system properties of your localhost to the `inventory` service at [http://localhost:9081/inventory/systems/localhost](http://localhost:9081/inventory/systems/localhost)
 
