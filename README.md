@@ -42,6 +42,30 @@ Comunication between services: The two microservices that you’ll be working wi
 └── ...
 ```
 
+### 1.4 system service ay high level
+
+Little java app which shows one time the system properties of the running JVM in `json` format.
+
+- At port 9080 (managed by pom.xml and server.xml)
+- At path: /system/properties (managed by jakarta.ws)
+
+```
+{"awt.toolkit":"sun.awt.X11.XToolkit","java.specification.version":"11","com.ibm.ws.beta.edition":"false","sun.jnu.encoding":"UTF-8","wlp.install.dir":"/opt/ol/wlp/","wlp.workarea.dir":"workarea/","sun.arch.data.model":"64","com.ibm.vm.bitmode":"64","java.vendor.url":"https://www.ibm.com/semeru-runtimes","server.output.dir":"/opt/ol/wlp/output/defaultServer/","sun.boot.library.path":"/opt/java/openjdk/lib/default:/opt/java/openjdk/lib",
+...}
+```
+
+### 1.5 inventory service ay high level
+
+More complex java app, based on MVC (Model-View-Controller) which serves an inventory of requests and creates this requests acceding to an end-point of the same server.
+
+- At port 9081 (managed by pom.xml and server.xml)
+- At path: /inventory/systems (managed by jakarta.ws)
+    --> Returns the requests made
+- At path: /inventory/systems/<system-ip-address> (managed by jakarta.ws)
+    --> Add the <system-ip-address> request to inventory
+
+To learn more about RESTful web services and how to build them, see [Restful Service with Open Liberty](https://openliberty.io/guides/rest-intro.html) for details about how to build the `system` service. The `inventory` service is built in a similar way.
+
 ## 2. Build & Run Liberty Services with Maven
 
 Navigate to the `mvn_ready` directory to begin.
@@ -80,12 +104,8 @@ Now 2 liberty services are running on different ports on your localhost:
 
 | Service | Port | Definition |
 | ------------- | ------------- | ------------- |
-| inventory  | 9081  | [mvn_ready/inventory/pom.xml](mvn_ready/inventory/pom.xml) & [mvn_ready/inventory/src/main/liberty/config/server.xml](mvn_ready/inventory/src/main/liberty/config/server.xml)  |
 | system  | 9080  | [mvn_ready/system/pom.xml](mvn_ready/system/pom.xml) & [mvn_ready/system/src/main/liberty/config/server.xml](mvn_ready/system/src/main/liberty/config/server.xml)  |
-
-* To acces main page of `inventory` see or curl [http://localhost:9081](http://localhost:9081)
-
-* To access the `inventory` service, which displays the current contents of the inventory, see [http://localhost:9081/inventory/systems](http://localhost:9081/inventory/systems)
+| inventory  | 9081  | [mvn_ready/inventory/pom.xml](mvn_ready/inventory/pom.xml) & [mvn_ready/inventory/src/main/liberty/config/server.xml](mvn_ready/inventory/src/main/liberty/config/server.xml)  |
 
 ```bash
 curl http://localhost:9081/inventory/systems
@@ -97,6 +117,10 @@ curl http://localhost:9081/inventory/systems
 ```bash
 curl http://localhost:9080/system/properties
 ```
+
+* To acces main page of `inventory` see or curl [http://localhost:9081](http://localhost:9081)
+
+* To access the `inventory` service, which displays the current contents of the inventory, see [http://localhost:9081/inventory/systems](http://localhost:9081/inventory/systems)
 
 * You can add the system properties of your localhost to the `inventory` service at [http://localhost:9081/inventory/systems/localhost](http://localhost:9081/inventory/systems/localhost)
 
@@ -110,8 +134,6 @@ After you are finished checking out the microservices, stop the Open Liberty ser
 mvn -pl system liberty:stop
 mvn -pl inventory liberty:stop
 ```
-
-To learn more about RESTful web services and how to build them, see https://openliberty.io/guides/rest-intro.html[Creating a RESTful web service^] for details about how to build the `system` service. The `inventory` service is built in a similar way.
 
 ## 3. Build & Run Liberty Services with Docker
 
@@ -209,14 +231,8 @@ If a problem occurs and your containers exit prematurely, the containers don't a
 
 | Service | Port | Definition |
 | ------------- | ------------- | ------------- |
-| inventory  | 9081  | [docker_ready/inventory/pom.xml](docker_ready/inventory/pom.xml) & [docker_ready/inventory/src/main/liberty/config/server.xml](docker_ready/inventory/src/main/liberty/config/server.xml)  |
 | system  | 9080  | [docker_ready/system/pom.xml](docker_ready/system/pom.xml) & [docker_ready/system/src/main/liberty/config/server.xml](docker_ready/system/src/main/liberty/config/server.xml)  |
-
-To access the `inventory` service, which displays the current contents of the inventory, see [http://localhost:9081/inventory/systems](http://localhost:9081/inventory/systems)
-
-```bash
-curl http://localhost:9081/inventory/systems
-```
+| inventory  | 9081  | [docker_ready/inventory/pom.xml](docker_ready/inventory/pom.xml) & [docker_ready/inventory/src/main/liberty/config/server.xml](docker_ready/inventory/src/main/liberty/config/server.xml) |
 
 To access the `system` service, which shows the system properties of the running JVM, see [http://localhost:9080/system/properties](http://localhost:9080/system/properties)
 
@@ -224,10 +240,10 @@ To access the `system` service, which shows the system properties of the running
 curl http://localhost:9080/system/properties
 ```
 
-You can add the system properties of your localhost to the `inventory` service at [http://localhost:9081/inventory/systems/localhost](http://localhost:9081/inventory/systems/localhost)
+To access the `inventory` service, which displays the current contents of the server inventory, see [http://localhost:9081/inventory/systems](http://localhost:9081/inventory/systems)
 
 ```bash
-curl http://localhost:9081/inventory/systems/localhost
+curl http://localhost:9081/inventory/systems
 ```
 
 > An empty list is expected because no system properties are stored in the inventory yet.
