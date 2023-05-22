@@ -1,5 +1,32 @@
 # Open Liberty Containerizing Microservices
 
+## 0. Content
+
+Sure! Here's an index for the README.md:
+
+1. [Introduction](#1-introduction)
+   - 1.1 [What you'll learn](#11-what-youll-learn)
+     - 1.1.1 [Service Containerization from development to production](#111-service-containerization-from-development-to-production)
+     - 1.1.2 [Communication between services](#112-communication-between-services)
+   - 1.2 [Prerequisites](#12-prerequisites)
+   - 1.3 [Repository Structure](#13-repository-structure)
+   - 1.4 [system service at high level](#14-system-service-at-high-level)
+   - 1.5 [inventory service at high level](#15-inventory-service-at-high-level)
+2. [Build & Run Liberty Services with Maven](#2-build--run-liberty-services-with-maven)
+   - 2.1 [Test the running services](#21-test-the-running-services)
+3. [Build & Run Liberty Services with Docker](#3-build--run-liberty-services-with-docker)
+   - 3.1 [Defining Dockerfiles](#31-defining-dockerfiles)
+     - 3.1.1 [What is Dockerfile?](#311-what-is-dockerfile)
+     - 3.1.2 [Liberty base image used](#312-liberty-base-image-used)
+   - 3.2 [Building services images](#32-building-services-images)
+     - 3.2.1 [Maven package](#321-maven-package)
+     - 3.2.2 [Dockerfiles](#322-dockerfiles)
+   - 3.3 [Running your microservices in Docker containers](#33-running-your-microservices-in-docker-containers)
+   - 3.4 [Checking docker running services](#34-checking-docker-running-services)
+4. [Externalising server configuration](#4-externalising-server-configuration)
+
+Please note that the last section is marked as "TODO" and requires further information. You can replace the "TODO" with the relevant content once it's available.
+
 ## 1. Introduction
 
 ### 1.1 What you'll learn
@@ -107,22 +134,22 @@ Now 2 liberty services are running on different ports on your localhost:
 | system  | 9080  | [mvn_ready/system/pom.xml](mvn_ready/system/pom.xml) & [mvn_ready/system/src/main/liberty/config/server.xml](mvn_ready/system/src/main/liberty/config/server.xml)  |
 | inventory  | 9081  | [mvn_ready/inventory/pom.xml](mvn_ready/inventory/pom.xml) & [mvn_ready/inventory/src/main/liberty/config/server.xml](mvn_ready/inventory/src/main/liberty/config/server.xml)  |
 
-```bash
-curl http://localhost:9081/inventory/systems
-```
-* To acces main page of `system` see or curl [http://localhost:9080](http://localhost:9080)
+* To acces main page of `system` see or curl http://localhost:9080
 
-* To access the `system` service, which shows the system properties of the running JVM, see [http://localhost:9080/system/properties](http://localhost:9080/system/properties)
-
+* To access the `system` service, which shows the system properties of the running JVM, see http://localhost:9080/system/properties
 ```bash
 curl http://localhost:9080/system/properties
 ```
 
-* To acces main page of `inventory` see or curl [http://localhost:9081](http://localhost:9081)
+* To acces main page of `inventory` see or curl http://localhost:9081
 
-* To access the `inventory` service, which displays the current contents of the inventory, see [http://localhost:9081/inventory/systems](http://localhost:9081/inventory/systems)
+* To access the `inventory` service, which displays the current contents of the inventory, see http://localhost:9081/inventory/systems
 
-* You can add the system properties of your localhost to the `inventory` service at [http://localhost:9081/inventory/systems/localhost](http://localhost:9081/inventory/systems/localhost)
+```bash
+curl http://localhost:9081/inventory/systems
+```
+
+* You can add the system properties of your localhost to the `inventory` service at http://localhost:9081/inventory/systems/localhost
 
 ```bash
 curl http://localhost:9081/inventory/systems/localhost
@@ -229,18 +256,9 @@ If a problem occurs and your containers exit prematurely, the containers don't a
 
 ### 3.4 Checking docker running services
 
-| Service | Port | Definition |
-| ------------- | ------------- | ------------- |
-| system  | 9080  | [docker_ready/system/pom.xml](docker_ready/system/pom.xml) & [docker_ready/system/src/main/liberty/config/server.xml](docker_ready/system/src/main/liberty/config/server.xml)  |
-| inventory  | 9081  | [docker_ready/inventory/pom.xml](docker_ready/inventory/pom.xml) & [docker_ready/inventory/src/main/liberty/config/server.xml](docker_ready/inventory/src/main/liberty/config/server.xml) |
+Exactly the same as [2.1 Test the running services](#21-test-the-running-services). 
 
-To access the `system` service, which shows the system properties of the running JVM, see [http://localhost:9080/system/properties](http://localhost:9080/system/properties)
-
-```bash
-curl http://localhost:9080/system/properties
-```
-
-To access the `inventory` service, which displays the current contents of the server inventory, see [http://localhost:9081/inventory/systems](http://localhost:9081/inventory/systems)
+With the add. To access the `inventory` service, which displays the current contents of the server inventory, see http://localhost:9081/inventory/systems
 
 ```bash
 curl http://localhost:9081/inventory/systems
@@ -262,11 +280,46 @@ Expected output:
 
 In this case, the IP address for the `system` service is `172.17.0.2`. Take note of this IP address to construct the URL to view the system properties. 
 
-Go to the [http://localhost:9081/inventory/systems/<system-ip-address>](http://localhost:9081/inventory/systems/<system-ip-address>) URL by replacing `<system-ip-address>` with the IP address that you obtained earlier. You see a result in JSON format with the system properties of your local JVM. When you go to this URL, these system properties are automatically stored in the inventory. Go back to the [http://localhost:9081/inventory/systems](http://localhost:9081/inventory/systems) URL and you see a new entry for `[system-ip-address]`.
+Go to the http://localhost:9081/inventory/systems/<system-ip-address> URL by replacing `<system-ip-address>` with the IP address that you obtained earlier. You see a result in JSON format with the system properties of your local JVM. When you go to this URL, these system properties are automatically stored in the inventory. Go back to the http://localhost:9081/inventory/systems) URL and you see a new entry for `[system-ip-address]`.
+
+## 4 Externalising server configuration
+
+As mentioned at the beginning of this guide, one of the advantages of using containers is that they are portable and can be moved and deployed efficiently across all of your DevOps environments. Configuration often changes across different environments, and by externalizing your server configuration, you can simplify the development process.
+
+Imagine a scenario where you are developing an Open Liberty application on port 9081 but to deploy it to production, it must be available on port 9091. To manage this scenario, you can keep two different versions of the server.xml file; one for production and one for development. However, trying to maintain two different versions of a file might lead to mistakes. A better solution would be to externalize the configuration of the port number and use the value of an environment variable that is stored in each environment.
+
+Imagine a scenario where you are developing an Open Liberty application on port 9081 but to deploy it to production, it must be available on port 9091. To manage this scenario, you can keep two different versions of the server.xml file; one for production and one for development. However, trying to maintain two different versions of a file might lead to mistakes. A better solution would be to externalize the configuration of the port number and use the value of an environment variable that is stored in each environment.
+
+### 4.1 External configuration of the HTTP port number of the inventory service
+
+In the [inventory/.../server.xml](docker_ready/inventory/src/main/liberty/config/server.xml) file, the default.http.port variable is declared and is used in the httpEndpoint element to define the service endpoint. The default value of the default.http.port variable is 9081. However, this value is only used if no other value is specified. You can replace this value in the container by using the `-e` flag for the `docker run command`.
+
+Run the following commands to stop and remove the inventory container and rerun it with the default.http.port environment variable set:
+```bash
+docker stop inventory
+```
+
+```bash
+docker rm inventory
+```
+
+```bash
+docker run -d --name inventory -e default.http.port=9091 -p 9091:9091 inventory:1.0-SNAPSHOT
+```
+
+The -e flag can be used to create and set the values of environment variables in a Docker container. In this case, you are setting the default.http.port environment variable to 9091 for the inventory container.
+
+Now, when the service is starting up, Open Liberty finds the default.http.port environment variable and uses it to set the value of the default.http.port variable to be used in the HTTP endpoint.
+
+### 4.2 Test the changed port
+
+The inventory service is now available on the new port number that you specified. You can see the contents of the inventory at the http://localhost:9091/inventory/systems URL. 
+
+You can externalize the configuration of more than just the port numbers. To learn more about [Open Liberty server configuration](https://openliberty.io/docs/latest/reference/config/server-configuration-overview.html), check out the Server Configuration Overview docs.
 
 ## TODO
-- [ ] Test all documented
-- [ ] Externalizing server configuration
+- [x] Test all documented
+- [ ] Externalizing server configuration of more parameters, check [url](https://openliberty.io/docs/latest/reference/config/server-configuration-overview.html)
 - [ ] Optimizing the image size
 - [ ] Testing the microservices
 - [ ] Running the tests
