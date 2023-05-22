@@ -323,4 +323,5 @@ You can externalize the configuration of more than just the port numbers. To lea
 - [ ] Optimizing the image size
 - [ ] Testing the microservices
 - [ ] Running the tests
+- [ ] package.sh to execute mvn in one stage of Dockerfile
 - [ ] Great work! You’re done!
