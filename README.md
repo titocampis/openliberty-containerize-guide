@@ -282,6 +282,26 @@ In this case, the IP address for the `system` service is `172.17.0.2`. Take note
 
 Go to the http://localhost:9081/inventory/systems/<system-ip-address> URL by replacing `<system-ip-address>` with the IP address that you obtained earlier. You see a result in JSON format with the system properties of your local JVM. When you go to this URL, these system properties are automatically stored in the inventory. Go back to the http://localhost:9081/inventory/systems) URL and you see a new entry for `[system-ip-address]`.
 
+Once your Docker containers are running, run the following command to see the list of required features installed by features.sh:
+
+```bash
+docker exec -it inventory /opt/ol/wlp/bin/productInfo featureInfo
+```
+
+Your list of Liberty features should be similar to the following:
+
+```
+jndi-1.0
+servlet-5.0
+cdi-3.0
+concurrent-2.0
+jsonb-2.0
+jsonp-2.0
+mpConfig-3.0
+restfulWS-3.0
+restfulWSClient-3.0
+```
+
 ## 4 Externalising server configuration
 
 As mentioned at the beginning of this guide, one of the advantages of using containers is that they are portable and can be moved and deployed efficiently across all of your DevOps environments. Configuration often changes across different environments, and by externalizing your server configuration, you can simplify the development process.
@@ -317,11 +337,47 @@ The inventory service is now available on the new port number that you specified
 
 You can externalize the configuration of more than just the port numbers. To learn more about [Open Liberty server configuration](https://openliberty.io/docs/latest/reference/config/server-configuration-overview.html), check out the Server Configuration Overview docs.
 
+## 5. Optimizing the image size
+
+As mentioned previously, the base image that is used in each Dockerfile contains the kernel-slim tag which provides a bare minimum server with the ability to add the features required by the application, including all of the Liberty features. The full Open liberty server has the full tag, and this parent image is recommended for development, but while deploying to production it is recommended to use a slimmer image.
+
+* Heavy Service Images:
+    - [system/Dockerfile-full](docker_ready/system/Dockerfile-full)
+    - [inventory/Dockerfile-full](docker_ready/inventory/Dockerfile-full)
+* Slim Service Images:
+    - [system/Dockerfile](docker_ready/system/Dockerfile)
+    - [inventory/Dockerfile](docker_ready/inventory/Dockerfile)
+
+## 6. Services Tests
+
+You can test your microservices manually by hitting the endpoints or with automated tests included in the services development that check your running Docker containers.
+
+* [system test](docker_ready/system/src/test/java/it/io/openliberty/guides/system/SystemEndpointIT.java)
+* [inventory test](docker_ready/inventory/src/test/java/it/io/openliberty/guides/inventory/InventoryEndpointIT.java)
+
+These tests use env vars configuration to check the correct function of the two services.
+
+To run them:
+
+```bash
+mvn package
+```
+
+```bash
+mvn failsafe:integration-test -Dsystem.ip=[system-ip-address] -Dinventory.http.port=9081 -Dsystem.http.port=9080
+```
+
+* **failsafe:** Run the Maven failsafe goal to test the services that are running in the Docker containers
+* **-Dxxx:** env vars used to check the correct funcioning. Replace [system-ip-address] by your 
+
+## 7. Include mvn package in Build Stage
+
+We want to execute all build process in the build stage, following the Dockerfile instructions and avoiding the need for the development team to perform an mvn package. So, we have to include the order / orders in Dockerfile.
+
+But, the parent liberty image, does not contains the binary mvn, so it is not possible to execute a mvn package
+
 ## TODO
 - [x] Test all documented
-- [ ] Externalizing server configuration of more parameters, check [url](https://openliberty.io/docs/latest/reference/config/server-configuration-overview.html)
-- [ ] Optimizing the image size
-- [ ] Testing the microservices
-- [ ] Running the tests
+- [ ] Externalizing more server configuration parameters, check [url](https://openliberty.io/docs/latest/reference/config/server-configuration-overview.html)
 - [ ] package.sh to execute mvn in one stage of Dockerfile
 - [ ] Great work! You’re done!

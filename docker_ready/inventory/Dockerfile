@@ -1,6 +1,11 @@
 # Using Slim Java Liberty base image
 FROM icr.io/appcafe/open-liberty:kernel-slim-java11-openj9-ubi
 
+# Execute mvn package in docker build stage --> Habra que
+# meterlo en una imagen que tenga mvn, porque esta creo que no lo tiene
+# Revisarlo en la documentación
+# RUN mvn package
+
 # Define env vars only available in the build phase
 ARG VERSION=1.0
 ARG REVISION=SNAPSHOT
