@@ -72,7 +72,6 @@ To access the `inventory` service, which displays the current contents of the in
 curl http://localhost:9081/inventory/systems
 ```
 
-
 > Defined at [mvn_ready/inventory/pom.xml](mvn_ready/inventory/pom.xml) and [mvn_ready/inventory/src/main/liberty/config/server.xml](mvn_ready/inventory/src/main/liberty/config/server.xml)
 
 To access the `system` service, which shows the system properties of the running JVM, see [http://localhost:9080/system/properties](http://localhost:9080/system/properties)
@@ -157,4 +156,74 @@ system        1.0-SNAPSHOT    1dff6d0b4f31    5 minutes ago    977MB
 
 ### 3.3 Running your microservices in Docker containers
 
+Now that your two images are built, you will run your microservices in Docker containers:
+```
+docker run -d --name system -p 9080:9080 system:1.0-SNAPSHOT
+docker run -d --name inventory -p 9081:9081 inventory:1.0-SNAPSHOT
+```
+
+Next, run the `docker ps` command to verify that your containers are started:
+
+```
+docker ps
+```
+
+
+```
+CONTAINER ID    IMAGE                   COMMAND                  CREATED          STATUS          PORTS                                        NAMES
+2b584282e0f5    inventory:1.0-SNAPSHOT  "/opt/ol/helpers/run…"   2 seconds ago    Up 1 second     9080/tcp, 9443/tcp, 0.0.0.0:9081->9081/tcp   inventory
+99a98313705f    system:1.0-SNAPSHOT     "/opt/ol/helpers/run…"   3 seconds ago    Up 2 seconds    0.0.0.0:9080->9080/tcp, 9443/tcp             system
+```
+
+If a problem occurs and your containers exit prematurely, the containers don't appear in the container list that the `docker ps` command displays. Instead, your containers appear with an `Exited` status when they run the `docker ps -a` command. Run the `docker logs system` and `docker logs inventory` commands to view the container logs for any potential problems. Run the `docker stats system` and `docker stats inventory` commands to display a live stream of usage statistics for your containers. You can also double-check that your Dockerfiles are correct. When you find the cause of the issues, remove the faulty containers with the `docker rm system` and `docker rm inventory` commands. Rebuild your images, and start the containers again.
+
+### 3.4 Check docker running services
+
+To access the `inventory` service, which displays the current contents of the inventory, see [http://localhost:9081/inventory/systems](http://localhost:9081/inventory/systems)
+
+```bash
+curl http://localhost:9081/inventory/systems
+```
+
+> Defined at [mvn_ready/inventory/pom.xml](mvn_ready/inventory/pom.xml) and [mvn_ready/inventory/src/main/liberty/config/server.xml](mvn_ready/inventory/src/main/liberty/config/server.xml)
+
+To access the `system` service, which shows the system properties of the running JVM, see [http://localhost:9080/system/properties](http://localhost:9080/system/properties)
+
+```bash
+curl http://localhost:9080/system/properties
+```
+
+> Defined at [mvn_ready/system/pom.xml](mvn_ready/system/pom.xml) and [mvn_ready/system/src/main/liberty/config/server.xml](mvn_ready/system/src/main/liberty/config/server.xml)
+
+You can add the system properties of your localhost to the `inventory` service at [http://localhost:9081/inventory/systems/localhost](http://localhost:9081/inventory/systems/localhost)
+
+```bash
+curl http://localhost:9081/inventory/systems/localhost
+```
+
+> An empty list is expected because no system properties are stored in the inventory yet.
+
+Next, retrieve the system container’s IP address by running the following:
+
+```bash
+docker inspect -f "{{.NetworkSettings.IPAddress }}" system
+```
+
+Expected output:
+
+```
+172.17.0.2
+```
+
+In this case, the IP address for the `system` service is `172.17.0.2`. Take note of this IP address to construct the URL to view the system properties. 
+
+Go to the [http://localhost:9081/inventory/systems/<system-ip-address>](http://localhost:9081/inventory/systems/<system-ip-address>) URL by replacing `<system-ip-address>` with the IP address that you obtained earlier. You see a result in JSON format with the system properties of your local JVM. When you go to this URL, these system properties are automatically stored in the inventory. Go back to the [http://localhost:9081/inventory/systems](http://localhost:9081/inventory/systems) URL and you see a new entry for `[system-ip-address]`.
+
+## TODO
+- [ ] Test all documented
+- [ ] Externalizing server configuration
+- [ ] Optimizing the image size
+- [ ] Testing the microservices
+- [ ] Running the tests
+- [ ] Great work! You’re done!
 
