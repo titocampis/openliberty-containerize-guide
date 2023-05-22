@@ -61,6 +61,7 @@ Comunication between services: The two microservices that you’ll be working wi
 ### 1.3 Repository Structure
 
 ```info
+.
 ├── mvn_ready/ --> multi-module liberty mvn project ready to build and run with mvn
 |    ├── inventory/ --> inventory microservice ready to build with liberty mvn
 |    |    ├── src/main/ --> microservice code
@@ -72,6 +73,10 @@ Comunication between services: The two microservices that you’ll be working wi
 |    ├── system/main/ --> inventory microservice ready to build with liberty mvn
 |    └── pom.xml --> pom.xml to compile both apps
 ├── docker_ready/ --> liberty apps ready to build and run with Docker
+|    ├── inventory/
+|    ├── system/
+|    └── pom.xml
+├── docker_package_ready/ --> liberty apps ready to mvn package, docker build and run with Docker
 |    ├── inventory/
 |    ├── system/
 |    └── pom.xml
