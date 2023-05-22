@@ -161,6 +161,9 @@ Now that your microservices are packaged and you have written your Dockerfiles, 
 
 ```bash
 docker build -t system:1.0-SNAPSHOT system/.
+```
+
+```bash
 docker build -t inventory:1.0-SNAPSHOT inventory/.
 ```
 
@@ -169,18 +172,22 @@ To verify that the images are built, run the docker images command to list all l
 ```bash
 docker images -f "label=org.opencontainers.image.authors=Your Name"
 ```
+
 ```
 REPOSITORY    TAG             IMAGE ID        CREATED          SIZE
 inventory     1.0-SNAPSHOT    08fef024e986    4 minutes ago    1GB
 system        1.0-SNAPSHOT    1dff6d0b4f31    5 minutes ago    977MB
 ```
 
-
 ### 3.3 Running your microservices in Docker containers
 
 Now that your two images are built, you will run your microservices in Docker containers:
-```
+
+``` bash
 docker run -d --name system -p 9080:9080 system:1.0-SNAPSHOT
+```
+
+``` bash
 docker run -d --name inventory -p 9081:9081 inventory:1.0-SNAPSHOT
 ```
 
@@ -189,7 +196,6 @@ Next, run the `docker ps` command to verify that your containers are started:
 ```
 docker ps
 ```
-
 
 ```
 CONTAINER ID    IMAGE                   COMMAND                  CREATED          STATUS          PORTS                                        NAMES
