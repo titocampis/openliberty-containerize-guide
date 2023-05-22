@@ -1,11 +1,11 @@
-# tag::kernel-slim[]
+# Using Slim Java Liberty base image
 FROM icr.io/appcafe/open-liberty:kernel-slim-java11-openj9-ubi
-# end::kernel-slim[]
 
+# Define env vars only available in the build phase
 ARG VERSION=1.0
 ARG REVISION=SNAPSHOT
 
-# tag::label[]
+# Add generic metadata to base image
 LABEL \
   org.opencontainers.image.authors="Your Name" \
   org.opencontainers.image.vendor="Open Liberty" \
@@ -18,36 +18,18 @@ LABEL \
   version="$VERSION-$REVISION" \
   summary="The inventory microservice from the Containerizing microservices guide" \
   description="This image contains the inventory microservice running with the Open Liberty runtime."
-# end::label[]
 
-# tag::copy-config[]
-# tag::config-userID[]
-COPY --chown=1001:0 \
-# end::config-userID[]
-    # tag::inventory-config[]
-    src/main/liberty/config \
-    # end::inventory-config[]
-    # tag::config[]
-    /config/
-    # end::config[]
-# end::copy-config[]
+# Copy local files to image
+## --chown:1001:0 => User:1001 / Group:0
+COPY --chown=1001:0 src/main/liberty/config /config
 
-# tag::features[]
+# Execute base image features.sh binary
 RUN features.sh
-# end::features[]
 
-# tag::copy-war[]
-# tag::war-userID[]
-COPY --chown=1001:0 \
-# end::war-userID[]
-    # tag::inventory-war[]
-    target/guide-containerize-inventory.war \
-    # end::inventory-war[]
-    # tag::config-apps[]
-    /config/apps
-    # end::config-apps[]
-# end::copy-war[]
+# Copy local files to image
+## --chown:1001:0 => User:1001 / Group:0ç
+## To have target/guide-containerxxx.war file locally a mvn package is needed
+COPY --chown=1001:0 target/guide-containerize-inventory.war /config/apps
 
-# tag::configure-sh[]
+# Execute base image features.sh binary
 RUN configure.sh
-# end::configure-sh[]
