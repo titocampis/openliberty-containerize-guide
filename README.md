@@ -148,11 +148,11 @@ To verify that the images are built, run the docker images command to list all l
 ```bash
 docker images -f "label=org.opencontainers.image.authors=Your Name"
 ```
-----
+```
 REPOSITORY    TAG             IMAGE ID        CREATED          SIZE
 inventory     1.0-SNAPSHOT    08fef024e986    4 minutes ago    1GB
 system        1.0-SNAPSHOT    1dff6d0b4f31    5 minutes ago    977MB
-----
+```
 
 
 ### 3.3 Running your microservices in Docker containers
